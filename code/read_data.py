@@ -1,6 +1,6 @@
 #script to read input data into list structure
 #dataX number of examples by 128 "array"
-#dataY number of examples by 2 (each example has a label and a qid)
+#dataY number of examples by 2 "array" (each example has a label and a qid)
 
 with open("../data/train_struct.txt", "r") as f:
 	raw_data = f.read()
