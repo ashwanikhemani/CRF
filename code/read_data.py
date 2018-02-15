@@ -15,5 +15,5 @@ for line in raw_data[:-2]: #-2 because last element is empty
 	dataX.append(datax)
 
 def print_image(X):
-	for i in range(8):
-		print(X[8*i:8*i+16])
+	for i in range(16):
+		print(X[8*i:8*i+8])
