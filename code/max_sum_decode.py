@@ -7,3 +7,4 @@ exampleX = numpy.array(dataX[:3], dtype=float)
 alphabet = [ i for i in range(1,27) ]
 m = 3
 
+print(decode.max_sum(dataX[:3], alphabet, W, T))

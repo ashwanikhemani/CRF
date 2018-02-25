@@ -23,7 +23,7 @@ def compute_prob(x, y, W, T):
 	return x_sum + t_sum
 
 def find_max(x, combinations, W, T):
-#now find the max decoder value and best y for a given word x
+#now find the max decoder value and best y for a given word x and combinations
 
 	max_val, likely_y = 0, 0
 	for y in combinations:
@@ -32,7 +32,7 @@ def find_max(x, combinations, W, T):
 			max_val = val
 			likely_y = y
 
-	return max_val, likely_y
+	return  likely_y, max_val
 
 def max_sum(x, alphabet, W, T):
 #max sum function will return the best set of letters
@@ -40,7 +40,7 @@ def max_sum(x, alphabet, W, T):
 
 	trellis = []
 	for i in alphabet:
-		trellis.append([[i], numpy.dot(x[0,:], W[i-1,:]), [numpy.dot(x[0,:], W[i-1,:])]])
+		trellis.append([[i], numpy.dot(x[0,:], W[i-1,:])])
 	for i in range(1,len(x)):
 		for node_1 in trellis:
 			best_sum, best_node2 = 0,0
@@ -53,7 +53,6 @@ def max_sum(x, alphabet, W, T):
 					best_node2 = j
 			node_1[0] += [best_node2]
 			node_1[1] = best_sum
-			node_1[2] += [best_sum]
 	best_node = trellis[0]
 	for node in trellis:
 		if best_node[1] < node[1]:
