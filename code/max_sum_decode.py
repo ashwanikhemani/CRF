@@ -18,42 +18,43 @@ def read_decode_input():
 
 	return X, W, T
 
+def read_input():
+#function to read data into list structure
+#dataX number of examples by 128 "array"
+#dataY number of examples by 2 "array" (each example has a label and a qid)
+
+	with open("../data/train_struct.txt", "r") as f:
+		raw_data = f.read()
+	raw_data = raw_data.split("\n")
+
+	dataX, dataY = [], []
+	for line in raw_data[:-2]: #-2 because last element is empty
+		line = line.split(" ")
+		dataY.append([ int(line[0]), int(line[1][4:]) ])
+		datax = [0]*128
+		for f1 in line[2:]:
+			end = f1.find(":")
+			datax[int(f1[:end])-1] = 1
+		dataX.append(datax)
+
+	return dataX, dataY
+
+
 X, W, T = read_decode_input()
+dataX, dataY = read_input()
+exampleX = numpy.array(dataX[:3], dtype=float)
 
 alphabet = [ i for i in range(1,27) ]
 m = 3
 
-def compute_prob(x, y, W, T):
-#decode a single example, the decoder is specified in project pdf (3)
-#the decoder computes sum of <W_y, Xi> + sum of T_ij
-
-	x_sum, t_sum = 0,0
-	for i in range(len(x)-1):
-		x_sum += numpy.dot(x[i,:],W[y[i]-1,:])
-		t_sum += T[y[i]-1, y[i+1]-1]
-	x_sum += numpy.dot(x[len(x)-1,:],W[y[len(x)-1]-1,:])
-
-	return x_sum + t_sum
-
-def compute_prob_letter(x_1, x_2, alphabet, W, T):
-#compute highest likely letter label given letter inputs 1 and 2
-
-	best_x1, best_x2, best_sum = 0,0,0
-	for i in alphabet:
-		for j in alphabet:
-			temp_sum = numpy.dot(x_1, W[i-1,:]) + T[i-1,j-1]
-			if best_sum < temp_sum:
-				best_x1, best_x2, best_sum = i, j, temp_sum
-
-	return best_x1, best_x2
-
-def max_sum(x, alphabet, m, W, T):
+def max_sum(x, alphabet, W, T):
 #max sum function will return the best set of letters
+#runs in O(mY^2) time
 
 	trellis = []
 	for i in alphabet:
-		trellis.append([[i], numpy.dot(x[0,:], W[i-1,:])])
-	for i in range(1,m):
+		trellis.append([[i], numpy.dot(x[0,:], W[i-1,:]), [numpy.dot(x[0,:], W[i-1,:])]])
+	for i in range(1,len(x)):
 		for node_1 in trellis:
 			best_sum, best_node2 = 0,0
 			for j in alphabet:
@@ -64,11 +65,11 @@ def max_sum(x, alphabet, m, W, T):
 					best_sum = temp_sum
 					best_node2 = j
 			node_1[0] += [best_node2]
-			node_1[1] += best_sum
-	best_sum, best_list = 0, None
+			node_1[1] = best_sum
+			node_1[2] += [best_sum]
+	best_node = trellis[0]
 	for node in trellis:
-		if best_sum < node[1]:
-			best_sum = node[1]
-			best_list = node[0]
+		if best_node[1] < node[1]:
+			best_node = node
 
-	return best_sum, best_list
+	return best_node
