@@ -18,7 +18,7 @@ def read_decode_input():
 
 	return X, W, T
 
-def read_train_struct():
+def read_train_struct():  #contemplate modifying this for performance reasons
 #function to read data into list structure
 #dataX number of examples by 128 currently a numpy array
 #dataY number of examples by 2 "array" (each example has a label and a qid)
@@ -30,7 +30,7 @@ def read_train_struct():
 	dataX, dataY = [], []
 	for line in raw_data[:-2]: #-2 because last element is empty
 		line = line.split(" ")
-		dataY.append([ int(line[0]), int(line[1][4:]) ])
+		dataY.append([ int(line[0])-1, int(line[1][4:]) ])
 		datax = [0]*128
 		for f1 in line[2:]:
 			end = f1.find(":")

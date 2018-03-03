@@ -16,9 +16,9 @@ def compute_prob(x, y, W, T):
 
 	x_sum, t_sum = 0,0
 	for i in range(len(x)-1):
-		x_sum += numpy.dot(x[i,:],W[y[i]-1,:])
-		t_sum += T[y[i]-1, y[i+1]-1]
-	x_sum += numpy.dot(x[len(x)-1,:],W[y[len(x)-1]-1,:])
+		x_sum += numpy.dot(x[i,:],W[y[i],:])
+		t_sum += T[y[i], y[i+1]]
+	x_sum += numpy.dot(x[len(x)-1,:],W[y[len(x)-1],:])
 
 	return x_sum + t_sum
 
@@ -40,14 +40,14 @@ def max_sum(x, alphabet, W, T):
 
 	trellis = []
 	for i in alphabet:
-		trellis.append([[i], numpy.dot(x[0,:], W[i-1,:])])
+		trellis.append([[i], numpy.dot(x[0,:], W[i,:])])
 	for i in range(1,len(x)):
 		for node_1 in trellis:
 			best_sum, best_node2 = 0,0
 			for j in alphabet:
 				temp_sum = node_1[1] +\
-					numpy.dot(x[i,:], W[j-1,:])+\
-					T[node_1[0][-1]-1,j-1]
+					numpy.dot(x[i,:], W[j,:])+\
+					T[node_1[0][-1],j]
 				if best_sum < temp_sum:
 					best_sum = temp_sum
 					best_node2 = j
