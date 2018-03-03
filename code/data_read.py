@@ -38,3 +38,37 @@ def read_train_struct():  #contemplate modifying this for performance reasons
 		dataX.append(datax)
 
 	return numpy.array(dataX, dtype=float), dataY
+
+def read_model():
+#function to read model for 2a
+	with open("../data/model.txt", "r") as f:
+		raw_data = f.read()
+	raw_data = raw_data.split("\n")
+
+	W = numpy.array(raw_data[:26*128], dtype=float).reshape(26, 128)
+	T = numpy.array(raw_data[26*128:-1], dtype=float).reshape(26, 26)
+	T = numpy.swapaxes(T, 0, 1)
+	return W, T
+
+def read_train():
+#function to read train data
+	from string import ascii_lowercase
+	mapping = list(enumerate(ascii_lowercase))
+	mapping = { i[1]:i[0] for i in mapping }
+
+	with open("../data/train.txt", "r") as f:
+		raw_data = f.read()
+	raw_data = raw_data.split("\n")
+
+	dataX, dataY = [], []
+	tempX, tempY = [], []
+	for row in raw_data[:-1]:
+		row = row.split(" ")
+		tempY.append( mapping[row[1]], dtype=int )
+		tempX.append( numpy.array(row[5:]), dtype=float )
+		if int(row[2]) < 0:
+			dataX.append(tempX)
+			dataY.append(tempY)
+			tempX, tempY = [], []
+
+	return dataX, dataY
