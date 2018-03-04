@@ -1,4 +1,5 @@
 import math, numpy
+numpy.set_printoptions(threshold=numpy.nan)
 
 def read_model():
 #function to read model for 2a
@@ -131,14 +132,14 @@ def log_p_wgrad(W, X, y, T):
 	letter_grad = numpy.zeros((26, 128))
 	for i in range(X.shape[0]):
 		expect[y[i]] = 1
+		prob = fb_prob(X, y[i], i, W, T)
 		for j in range(26):
-			prob = fb_prob(X, j, i, W, T)
 			expect[j] -= prob
-		print(expect)
 		for j in range(26):
 			numpy.multiply(expect[j], X[i], out=letter_grad[j])
 		numpy.add(grad, letter_grad, out=grad)
 		expect[:] = 0
+	print(grad)
 	return grad
 
 log_p_wgrad(W, data[0][0], data[0][1], T)
