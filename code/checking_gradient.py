@@ -135,7 +135,6 @@ def log_p_wgrad(W, X, y, T):
 		prob = fb_prob(X, y[i], i, W, T)
 		for j in range(26):
 			expect[j] -= prob
-		for j in range(26):
 			numpy.multiply(expect[j], X[i], out=letter_grad[j])
 		numpy.add(grad, letter_grad, out=grad)
 		expect[:] = 0
