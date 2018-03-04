@@ -35,6 +35,7 @@ def compute_log_p(X, y, W, T):
 
 def fb_prob(X, y_i, y_i_pos, W, T):
 #computes the marginal prob of y_i by incorporating backward messages
+#y_i is the label and y_i_pos is the letter position
 	alpha_len = 26
 	trellis = numpy.zeros((X.shape[0], alpha_len))
 	interior = numpy.zeros(alpha_len)
@@ -50,6 +51,16 @@ def fb_prob(X, y_i, y_i_pos, W, T):
 			numpy.exp(interior, out=interior)
 			trellis[i, j] = M + math.log(numpy.sum(interior))
 
+	forward_part = 0
+	if y_i_pos > 0:
+		for k in range(alpha_len):
+			interior[k] = numpy.dot(W[k], X[y_i_pos-1]) +\
+				T[k, y_i] + trellis[y_i_pos-1, k]
+		M = numpy.max(interior)
+		numpy.add(interior, -1*M, out=interior)
+		numpy.exp(interior, out=interior)
+		forward_part = M + math.log(numpy.sum(interior))
+
 	#backward part
 	for i in range(X.shape[0]-2, y_i_pos, -1):
 		for j in range(alpha_len):
@@ -60,9 +71,22 @@ def fb_prob(X, y_i, y_i_pos, W, T):
 			numpy.add(interior, -1*M, out=interior)
 			numpy.exp(interior, out=interior)
 	
-	prob = math.log(trellis[y_i_pos 
-			trellis[i, j] = M + math.log(numpy.sum(interior))
+	
+	backward_part = 0
+	if y_i_pos < X.shape[0] - 1:
+		for k in range(alpha_len):
+			interior[k] = numpy.dot(W[k], X[y_i_pos+1]) +\
+				T[y_i, k] + trellis[y_i_pos+1, k]
+		M = numpy.max(interior)
+		numpy.add(interior, -1*M, out=interior)
+		numpy.exp(interior, out=interior)
+		backward_part = M + math.log(numpy.sum(interior))
 
+	#final result
+	prob = forward_part + backward_part + numpy.dot(W[y_i], X[y_i_pos])
+	print(prob)
+	return prob
+	
 
 def compute_gradw(X, y, W, T):
 #returns the gradient of the W vector for a given X, y pair
