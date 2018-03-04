@@ -64,11 +64,11 @@ def read_train():
 	tempX, tempY = [], []
 	for row in raw_data[:-1]:
 		row = row.split(" ")
-		tempY.append( mapping[row[1]], dtype=int )
-		tempX.append( numpy.array(row[5:]), dtype=float )
+		tempY.append( mapping[row[1]])
+		tempX.append( numpy.array(row[5:], dtype=float) )
 		if int(row[2]) < 0:
-			dataX.append(tempX)
-			dataY.append(tempY)
+			dataX.append(numpy.array(tempX))
+			dataY.append(numpy.array(tempY, dtype=int))
 			tempX, tempY = [], []
 
 	return dataX, dataY

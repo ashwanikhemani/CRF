@@ -40,19 +40,23 @@ def max_sum(X, W, T):
 	alpha_len = 26
 	trellis = numpy.zeros((X.shape[0],alpha_len))
 	interior = numpy.zeros(alpha_len)
-	y_star = numpy.zeros(X.shape[0])
+	y_star = numpy.zeros(X.shape[0], dtype=int)
 
 	for i in range(1, X.shape[0]):
 		for j in range(alpha_len):
 			for k in range(alpha_len):
 				interior[k] = numpy.dot(W[k], X[i-1]) +\
 					T[k, j] + trellis[i-1, k]
-			max_ind = numpy.argmax(interior)
-			y_star[i-1], trellis[i, j] = max_ind, interior[max_ind]
-			interior[:] = 0
+			trellis[i, j] = numpy.max(interior)
 	
 	for i in range(alpha_len):
 		interior[i] = numpy.dot(W[i], X[-1]) + trellis[-1, k]
 	y_star[-1] = numpy.argmax(interior)
+
+	for i in range(X.shape[0]-1, 0, -1):
+		for j in range(alpha_len):
+			interior[j] = numpy.dot(W[j], X[i-1]) +\
+				T[j, y_star[i]] + trellis[i-1, j]
+		y_star[i-1] = numpy.argmax(interior)
 
 	return y_star
