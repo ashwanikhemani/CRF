@@ -29,7 +29,6 @@ def compute_log_p(X, y, W, T):
 	numpy.exp(interior, out=interior)
 	
 	log_z = M + math.log(numpy.sum(interior))
-#	print(math.exp(sum_num - log_z))
 
 	return sum_num - log_z
 
@@ -84,7 +83,7 @@ def fb_prob(X, y_i, y_i_pos, W, T):
 
 	#final result
 	prob = forward_part + backward_part + numpy.dot(W[y_i], X[y_i_pos])
-	print(prob)
+#	print(prob)
 	return prob
 	
 
