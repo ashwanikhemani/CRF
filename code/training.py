@@ -11,31 +11,58 @@ def compute_log_p(X, y, W, T):
 		sum_num += numpy.dot(W[y[i]], X[i]) + T[y[i-1], y[i]]
 	
 	trellis = numpy.zeros((X.shape[0], alpha_len))
-	interior = numpy.zeros((1,alpha_len))
+	interior = numpy.zeros(alpha_len)
 	for i in range(1, X.shape[0]):
 		for j in range(alpha_len):
-			interior[0, :], M, sum_ = 0, 0, 0
 			for k in range(alpha_len):
-				interior[0, k] = numpy.dot(W[k], X[i-1]) +\
+				interior[k] = numpy.dot(W[k], X[i-1]) +\
 					T[k,j] + trellis[i-1, k]
-				if M < interior[0, k]:
-					M = interior[0, k]
-			for k in range(alpha_len):
-				sum_ += math.exp(interior[0, k] - M)
-			trellis[i, j] = M + math.log(sum_)
+			M = numpy.max(interior)
+			numpy.add(interior, -1*M, out=interior)
+			numpy.exp(interior, out=interior)
+			trellis[i, j] = M + math.log(numpy.sum(interior))
 
-	interior[0, :], M, sum_ = 0, 0, 0
 	for i in range(alpha_len):
-		interior[0, i] = numpy.dot(W[i], X[-1]) + trellis[-1, i]
-		if M < interior[0, i]:
-			M = interior[0, i]
-	for i in range(alpha_len):
-		sum_ += math.exp(interior[0, i] - M)
+		interior[k] = numpy.dot(W[k], X[-1]) + trellis[-1, k]
+	M = numpy.max(interior)
+	numpy.add(interior, -1*M, out=interior)
+	numpy.exp(interior, out=interior)
 	
-	log_z = M + math.log(sum_)
+	log_z = M + math.log(numpy.sum(interior))
+#	print(math.exp(sum_num - log_z))
 
-	print(log_z)
 	return sum_num - log_z
+
+def fb_prob(X, y_i, y_i_pos, W, T):
+#computes the marginal prob of y_i by incorporating backward messages
+	alpha_len = 26
+	trellis = numpy.zeros((X.shape[0], alpha_len))
+	interior = numpy.zeros(alpha_len)
+
+	#forward part
+	for i in range(1, y_i_pos):
+		for j in range(alpha_len):
+			for k in range(alpha_len):
+				interior[k] = numpy.dot(W[k], X[i-1]) +\
+					T[k,j] + trellis[i-1, k]
+			M = numpy.max(interior)
+			numpy.add(interior, -1*M, out=interior)
+			numpy.exp(interior, out=interior)
+			trellis[i, j] = M + math.log(numpy.sum(interior))
+
+	#backward part
+	for i in range(X.shape[0]-2, y_i_pos, -1):
+		for j in range(alpha_len):
+			for k in range(alpha_len):
+				interior[k] = numpy.dot(W[k], X[i+1]) +\
+					T[j, k] + trellis[i+1, k]
+			M = numpy.max(interior)
+			numpy.add(interior, -1*M, out=interior)
+			numpy.exp(interior, out=interior)
+	
+	prob = math.log(trellis[y_i_pos 
+			trellis[i, j] = M + math.log(numpy.sum(interior))
+
 
 def compute_gradw(X, y, W, T):
 #returns the gradient of the W vector for a given X, y pair
