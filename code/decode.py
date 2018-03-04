@@ -34,28 +34,25 @@ def find_max(x, combinations, W, T):
 
 	return  likely_y, max_val
 
-def max_sum(x, alphabet, W, T):
-#max sum function will return the best set of letters
-#runs in O(mY^2) time
+def max_sum(X, W, T):
+#decodes by running the max sum algorithm
+#X, W, T are numpy arrays (X is the input)
+	alpha_len = 26
+	trellis = numpy.zeros((X.shape[0],alpha_len))
+	interior = numpy.zeros(alpha_len)
+	y_star = numpy.zeros(X.shape[0])
 
-	trellis = []
-	for i in alphabet:
-		trellis.append([[i], numpy.dot(x[0,:], W[i,:])])
-	for i in range(1,len(x)):
-		for node_1 in trellis:
-			best_sum, best_node2 = 0,0
-			for j in alphabet:
-				temp_sum = node_1[1] +\
-					numpy.dot(x[i,:], W[j,:])+\
-					T[node_1[0][-1],j]
-				if best_sum < temp_sum:
-					best_sum = temp_sum
-					best_node2 = j
-			node_1[0] += [best_node2]
-			node_1[1] = best_sum
-	best_node = trellis[0]
-	for node in trellis:
-		if best_node[1] < node[1]:
-			best_node = node
+	for i in range(1, X.shape[0]):
+		for j in range(alpha_len):
+			for k in range(alpha_len):
+				interior[k] = numpy.dot(W[k], X[i-1]) +\
+					T[k, j] + trellis[i-1, k]
+			max_ind = numpy.argmax(interior)
+			y_star[i-1], trellis[i, j] = max_ind, interior[max_ind]
+			interior[:] = 0
+	
+	for i in range(alpha_len):
+		interior[i] = numpy.dot(W[i], X[-1]) + trellis[-1, k]
+	y_star[-1] = numpy.argmax(interior)
 
-	return best_node
+	return y_star
