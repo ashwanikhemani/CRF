@@ -71,4 +71,5 @@ def read_train():
 			dataY.append(numpy.array(tempY, dtype=int))
 			tempX, tempY = [], []
 
-	return dataX, dataY
+	ret = zip(dataX, dataY)
+	return list(ret)

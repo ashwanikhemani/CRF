@@ -1,4 +1,4 @@
-import numpy, data_read, training
+import numpy, data_read, prob_grad
 
 W, T = data_read.read_model()
 
@@ -10,7 +10,7 @@ t0 = time.time()
 
 a = numpy.zeros(len(X))
 for i in range(len(X)):
-	a[i] = training.compute_log_p(X[i], Y[i], W, T)
+	a[i] = prob_grad.compute_log_p(X[i], Y[i], W, T)
 print(f"AVG: {numpy.sum(a)/len(X)}")
 t1 = time.time()
 
