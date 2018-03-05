@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Mar  2 23:00:04 2018
+Created on Fri Mar  2 17:51:34 2018
 
 @author: ashwa
 """
 
-import subprocess
 from readInput import read_train_struct,read_test_struct,read_word_indexes
-import numpy as np
-import os.path
+from sklearn.svm import LinearSVC
 import matplotlib.pyplot as mp
+import numpy as np
 
-def train(c):    
-#   output = subprocess.getoutput('svm_hmm_learn -c 1 train_struct.txt declaration.model')
-    subprocess.call(["svm_hmm_learn", "-c", str(c), "train_struct.txt", "declaration.model"])
+def train(xtrain,y_train,c):    
+    clf = LinearSVC(random_state=0,C=c)
+    clf.fit(xtrain,y_train)
+    return clf
 
-def test():
-#    output = subprocess.getoutput('svm_hmm_classify test_struct.txt declaration.model test.outtags ')
-    subprocess.call(["svm_hmm_classify", "test_struct.txt", "declaration.model","test.outtags"])
+def test(model,X_test,y_test):
+    y_pred=model.predict(X_test)
+    score=(model.score(X_test,y_test))
+    return y_test,y_pred,score
 
 def form_words(y1,y2):
     word_ends=[]
@@ -30,6 +31,7 @@ def form_words(y1,y2):
         end=word_ends[i+1]+1
         g_word=y1[start:end]
         p_word=y2[start:end]
+        g_word = [ i[0] for i in g_word ]
         start=end
         given_words.append(g_word)
         pred_words.append(p_word)
@@ -42,29 +44,19 @@ def word_accuracy(words1,words2):
             count+=1
     return count/len(words1)
     
-def get_test_accuracy(y1,y2):
-    count=0
-    for i,j in zip(y1,y2):
-        if(np.array_equal(i,j)):
-            count+=1
-    return count/len(y1)
-
-    
 def plot():
-    C=[1,10]
+    C=[1,10,100,1000]
     test_accuracy =[]
     word_acr =[]
     X_train ,y_train=read_train_struct();
     X_test,y_test=read_test_struct()
+
     for i in C : 
-        train(i)
-        test()
-        my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "test.outtags")
-        y_pred=np.loadtxt(path,usecols=(0,))
-        y_test=y_test.reshape(len(y_test),)
-        test_acc=get_test_accuracy(y_test,y_pred)
-        test_accuracy.append(test_acc*100)
+        y_train=y_train.ravel()
+        clf=train(X_train,y_train,i/len(y_train))
+        y_test,y_pred,score=test(clf,X_test,y_test)
+        test_accuracy.append(score*100)
+        y_train=y_train.reshape(len(y_train,))
         given_words, pred_words=form_words(y_test,y_pred)
         w_acc=word_accuracy(given_words,pred_words)
         word_acr.append(w_acc*100)
@@ -74,9 +66,12 @@ def plot():
     mp.ylabel('Accuracy')
     mp.xlabel('C')
     mp.figure(2)
+    mp.figure
     mp.plot(C,word_acr)
     mp.ylabel('Accuracy')
     mp.xlabel('C')
+
     
 #plot()
+    
 
