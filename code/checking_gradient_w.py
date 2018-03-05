@@ -90,7 +90,7 @@ def fb_prob(X, W, T):
 			trellisfw[i, j] = M + math.log(numpy.sum(interior))
 
 	for i in range(alpha_len):
-		interior[k] = numpy.dot(W[k], X[-1]) + trellisfw[-1, k]
+		interior[i] = numpy.dot(W[i], X[-1]) + trellisfw[-1, i]
 	M = numpy.max(interior)
 	numpy.add(interior, -1*M, out=interior)
 	numpy.exp(interior, out=interior)
@@ -121,7 +121,6 @@ def log_p_wgrad(W, X, y, T):
 		prob = (trellisfw[i, y[i]] + trellisbw[i, y[i]] +\
 			numpy.dot(W[y[i]], X[i]))-log_z
 		prob = math.exp(prob)
-		print(prob)
 		expect[y[i]] = 1
 		for j in range(26):
 			expect[j] -= prob

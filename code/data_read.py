@@ -28,7 +28,7 @@ def read_train_struct():  #contemplate modifying this for performance reasons
 	raw_data = raw_data.split("\n")
 
 	dataX, dataY = [], []
-	for line in raw_data[:-2]: #-2 because last element is empty
+	for line in raw_data[:-1]: #-2 because last element is empty
 		line = line.split(" ")
 		dataY.append([ int(line[0])-1, int(line[1][4:]) ])
 		datax = [0]*128

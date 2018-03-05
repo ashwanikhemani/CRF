@@ -23,7 +23,7 @@ def compute_log_p(X, y, W, T):
 			trellis[i, j] = M + math.log(numpy.sum(interior))
 
 	for i in range(alpha_len):
-		interior[k] = numpy.dot(W[k], X[-1]) + trellis[-1, k]
+		interior[i] = numpy.dot(W[i], X[-1]) + trellis[-1, i]
 	M = numpy.max(interior)
 	numpy.add(interior, -1*M, out=interior)
 	numpy.exp(interior, out=interior)
