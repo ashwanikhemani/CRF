@@ -14,8 +14,14 @@ def func(params, *args):
 	log_sum = 0
 	for example in data:
 		log_sum += prob_grad.compute_log_p(example[0], example[1], W, T)
+
+	norm = numpy.zeros(26)
+	for i in range(26):
+		norm[i] = numpy.linalg.norm(W[i])
+
+	numpy.square(norm, out=norm)
 	
-	return -1*(C/len(data))*log_sum + 0.5*norm(W)**2 + 0.5*numpy.sum(numpy.square(T))
+	return -1*(C/len(data))*log_sum + 0.5*numpy.sum(norm) + 0.5*numpy.sum(numpy.square(T))
 
 def func_prime(params, *args):
 #derivative of objective function specified in the handout
