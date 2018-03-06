@@ -1,6 +1,5 @@
 import numpy, data_read, prob_grad
 from scipy.optimize import fmin_bfgs
-from numpy.linalg import norm
 
 X_y = data_read.read_train()
 W, T = data_read.read_model()
@@ -64,4 +63,4 @@ initial_guess = numpy.zeros((26*128+26*26))
 
 
 ret = fmin_bfgs(func, initial_guess, fprime=func_prime, args=(X_y[:5], 1000),\
-	maxiter=10, retall=True, full_output=True)
+	maxiter=2, retall=True, full_output=True)
