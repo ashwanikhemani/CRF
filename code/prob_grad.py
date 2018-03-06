@@ -76,16 +76,21 @@ def log_p_wgrad(W, X, y, T):
 #will compute the gradient of an example
 	grad = numpy.zeros((26, 128)) #size of the alphabet by 128 elems
 	expect = numpy.zeros(26)
-	letter_grad = numpy.zeros((26, 128))
 	trellisfw, trellisbw, log_z = fb_prob(X, W, T)
+	prob = numpy.zeros(26)
 	for i in range(X.shape[0]):
-		prob = (trellisfw[i, y[i]] + trellisbw[i, y[i]] +\
-			numpy.dot(W[y[i]], X[i]))-log_z
-		prob = math.exp(prob)
-		expect[y[i]] = 1
 		for j in range(26):
-			expect[j] -= prob
-			numpy.multiply(expect[j], X[i], out=letter_grad[j])
+			prob[j] = (trellisfw[i, j] + trellisbw[i, j] +\
+				numpy.dot(W[j], X[i])) - log_z
+			#prob that the sth character is j
+		numpy.exp(prob, out=prob)
+		expect[y[i]] = 1
+		numpy.add(expect, -1*prob, out=expect)
+		#duplicate X
+		letter_grad = numpy.tile(X[i], (26, 1))
+		#multiply by transpose expect
+		numpy.multiply(expect[:, numpy.newaxis], letter_grad,\
+			out=letter_grad)
 		numpy.add(grad, letter_grad, out=grad)
 		expect[:] = 0
 	return grad
