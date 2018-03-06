@@ -100,12 +100,15 @@ def log_p_tgrad(T, X, y, W):
 	grad = numpy.zeros((26, 26)) #size of the alphabet by 128 elems
 	expect = numpy.zeros((26, 26))
 	letter_grad = numpy.zeros((26, 26))
+	prob = numpy.zeros((26, 26))
 	trellisfw, trellisbw, log_z = fb_prob(X, W, T)
 	for i in range(X.shape[0]-1):
-		prob = (trellisfw[i, y[i]] + trellisbw[i+1, y[i+1]] +\
-			numpy.dot(W[y[i]], X[i]) + numpy.dot(W[y[i+1]], X[i+1]) +\
-			T[y[i], y[i+1]]) - log_z
-		prob = math.exp(prob)
+		for j in range(26):
+			for k in range(26):
+				prob[j, k] = (trellisfw[i, j] + trellisbw[i+1, k] +\
+					numpy.dot(W[j], X[i]) + numpy.dot(W[k], X[i+1]) +\
+					T[j, k]) - log_z
+		numpy.exp(prob, out=prob)
 		expect[y[i], y[i+1]] = 1
 		numpy.add(expect, -1*prob, out=expect)
 		numpy.add(grad, expect, out=grad)
