@@ -12,16 +12,18 @@ def compute_log_p(X, y, W, T):
 	
 	trellisfw = numpy.zeros((X.shape[0], alpha_len))
 	interior = numpy.zeros(alpha_len)
-	for i in range(1, X.shape[0]):
-		for j in range(alpha_len):
-			dots = numpy.matmul(W, X[i-1])
-			numpy.add(dots, T[:,j], out=interior)
-			numpy.add(interior, trellisfw[i-1], out=interior)
+	messages = numpy.zeros((26, 26))
 
-			M = numpy.max(interior)
-			numpy.add(interior, -1*M, out=interior)
-			numpy.exp(interior, out=interior)
-			trellisfw[i, j] = M + math.log(numpy.sum(interior))
+	for i in range(1, X.shape[0]):
+		numpy.matmul(W, X[i-1], out=interior)
+		numpy.add(interior, trellisfw[i-1], out=interior)
+		numpy.add(T, interior[:, numpy.newaxis], out=messages)
+		maxes = messages.max(axis=0)
+		numpy.add(messages, -1*maxes, out=messages)
+		numpy.exp(messages, out=messages)
+		numpy.sum(messages, axis=0, out=interior)
+		numpy.log(interior, out=interior)
+		numpy.add(maxes, interior, out=trellisfw[i])
 
 	dots = numpy.matmul(W, X[-1])
 	numpy.add(dots, trellisfw[-1], out=interior)
