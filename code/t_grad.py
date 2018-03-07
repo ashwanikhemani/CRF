@@ -13,6 +13,6 @@ for i in range(len(data)):
 		grad, out=grad)
 t1 = time.time()
 
-print(f"{numpy.divide(grad, len(data))}")
+#print(f"{numpy.divide(grad, len(data))}")
 
 print(f"Time: {t1-t0}")

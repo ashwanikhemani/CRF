@@ -107,20 +107,21 @@ def log_p_wgrad(W, X, y, T):
 
 def log_p_tgrad(T, X, y, W):
 #will compute the gradient of an example
-	grad = numpy.zeros((26, 26)) #size of the alphabet by 128 elems
+	grad = numpy.zeros((26, 26))
+	potential = numpy.zeros((26, 26))
 	expect = numpy.zeros((26, 26))
-	letter_grad = numpy.zeros((26, 26))
-	prob = numpy.zeros((26, 26))
 	trellisfw, trellisbw, log_z = fb_prob(X, W, T)
+
 	for i in range(X.shape[0]-1):
-		for j in range(26):
-			for k in range(26):
-				prob[j, k] = (trellisfw[i, j] + trellisbw[i+1, k] +\
-					numpy.dot(W[j], X[i]) + numpy.dot(W[k], X[i+1]) +\
-					T[j, k]) - log_z
-		numpy.exp(prob, out=prob)
+		numpy.add.outer(numpy.matmul(W, X[i]), numpy.matmul(W, X[i+1]),\
+			out=potential)
+		numpy.add(T, potential, out=potential)
+		numpy.add(trellisfw[i][:, numpy.newaxis], potential, out=potential)
+		numpy.add(trellisbw[i+1], potential, out=potential)
+		numpy.add(-1*log_z, potential, out=potential)
+		numpy.exp(potential, out=potential)
 		expect[y[i], y[i+1]] = 1
-		numpy.add(expect, -1*prob, out=expect)
-		numpy.add(grad, expect, out=grad)
+		numpy.add(expect, -1*potential, out=potential)
+		numpy.add(grad, potential, out=grad)
 		expect[:, :] = 0
 	return grad
