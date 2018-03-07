@@ -10,20 +10,22 @@ def compute_log_p(X, y, W, T):
 	for i in range(1, X.shape[0]):
 		sum_num += numpy.dot(W[y[i]], X[i]) + T[y[i-1], y[i]]
 	
-	trellis = numpy.zeros((X.shape[0], alpha_len))
+	trellisfw = numpy.zeros((X.shape[0], alpha_len))
 	interior = numpy.zeros(alpha_len)
 	for i in range(1, X.shape[0]):
 		for j in range(alpha_len):
-			for k in range(alpha_len):
-				interior[k] = numpy.dot(W[k], X[i-1]) +\
-					T[k,j] + trellis[i-1, k]
+			dots = numpy.matmul(W, X[i-1])
+			numpy.add(dots, T[:,j], out=interior)
+			numpy.add(interior, trellisfw[i-1], out=interior)
+
 			M = numpy.max(interior)
 			numpy.add(interior, -1*M, out=interior)
 			numpy.exp(interior, out=interior)
-			trellis[i, j] = M + math.log(numpy.sum(interior))
+			trellisfw[i, j] = M + math.log(numpy.sum(interior))
 
-	for i in range(alpha_len):
-		interior[i] = numpy.dot(W[i], X[-1]) + trellis[-1, i]
+	dots = numpy.matmul(W, X[-1])
+	numpy.add(dots, trellisfw[-1], out=interior)
+
 	M = numpy.max(interior)
 	numpy.add(interior, -1*M, out=interior)
 	numpy.exp(interior, out=interior)
