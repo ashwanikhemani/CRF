@@ -33,7 +33,6 @@ def compute_log_p(X, y, W, T):
 	return sum_num - log_z
 
 def fb_prob(X, W, T):
-#returns forward trellis and backward trellis and normalizer
 	alpha_len = 26
 	trellisfw = numpy.zeros((X.shape[0], alpha_len))
 	trellisbw = numpy.zeros((X.shape[0], alpha_len))
@@ -42,16 +41,16 @@ def fb_prob(X, W, T):
 	#forward part
 	for i in range(1, X.shape[0]):
 		for j in range(alpha_len):
-			for k in range(alpha_len):
-				interior[k] = numpy.dot(W[k], X[i-1]) +\
-					T[k,j] + trellisfw[i-1, k]
+			dots = numpy.matmul(W, X[i-1])
+			numpy.add(dots, T[:,j], out=interior)
+			numpy.add(interior, trellisfw[i-1], out=interior)
 			M = numpy.max(interior)
 			numpy.add(interior, -1*M, out=interior)
 			numpy.exp(interior, out=interior)
 			trellisfw[i, j] = M + math.log(numpy.sum(interior))
 
-	for i in range(alpha_len):
-		interior[i] = numpy.dot(W[i], X[-1]) + trellisfw[-1, i]
+	dots = numpy.matmul(W, X[-1])
+	numpy.add(dots, trellisfw[-1], out=interior)
 	M = numpy.max(interior)
 	numpy.add(interior, -1*M, out=interior)
 	numpy.exp(interior, out=interior)
@@ -62,14 +61,14 @@ def fb_prob(X, W, T):
 	#backward part
 	for i in range(X.shape[0]-2, -1, -1):
 		for j in range(alpha_len):
-			for k in range(alpha_len):
-				interior[k] = numpy.dot(W[k], X[i+1]) +\
-					T[j, k] + trellisbw[i+1, k]
+			dots = numpy.matmul(W, X[i+1])
+			numpy.add(dots, T[j,:], out=interior)
+			numpy.add(interior, trellisbw[i+1], out=interior)
 			M = numpy.max(interior)
 			numpy.add(interior, -1*M, out=interior)
 			numpy.exp(interior, out=interior)
 			trellisbw[i, j] = M + math.log(numpy.sum(interior))
-	
+
 	return trellisfw, trellisbw, log_z
 
 def log_p_wgrad(W, X, y, T):
