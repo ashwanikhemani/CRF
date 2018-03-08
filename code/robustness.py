@@ -20,7 +20,7 @@ path = os.path.join(my_path, "../data/transform.txt")
 
 
 f = open(path, 'r')
-x=[0,10]
+x=[0,500,1000,1500]
 
 train_data={}
 
@@ -34,7 +34,7 @@ def restore_range(OldValue,OldMax,OldMin,NewMin,NewMax):
     return np.round(NewValue)
 
 
-
+#method to peform transformation on the data and check robustness
 def tamper(model):
     test_acc =[]
     wrd_acr =[]
@@ -66,15 +66,29 @@ def tamper(model):
             x_max_new=1
             new_value=restore_range(x_result,x_max_old,x_min_old,x_min_new,x_max_new)
             X_trans[int(line[1])]=new_value
+        #training 
         if(num==0):
             if(model=='svm'):
                 clf=svm.train(X_train,y_train,1000/len(y_train))
             else:      
-                x_y=X_trans,y_train
+                x_y=X_train,y_train
                 optimize.get_params(x_y)
                 a=np.loadtxt("best_Weights_tampered",usecols=(0,))
                 W=np.array(a[:26*128].reshape(26,128))
-                T=np.array(a[26*128:26*128+26*26].reshape(26,26))            
+                T=np.array(a[26*128:26*128+26*26].reshape(26,26))   
+        #training with more than 1 transformation 
+        else:
+            if(model=='svm'):
+                clf=svm.train(X_trans,y_train,1000/len(y_train))
+            else:      
+                x_y=X_trans,y_train
+                print(type(x_y))
+                optimize.get_params(x_y)
+                a=np.loadtxt("best_Weights_tampered",usecols=(0,))
+                W=np.array(a[:26*128].reshape(26,128))
+                T=np.array(a[26*128:26*128+26*26].reshape(26,26))   
+
+        #testing 
         if(model=='svm'):
             y_pred,score=svm.test(clf,X_test,y_test)
         else:
@@ -85,8 +99,8 @@ def tamper(model):
             print((y_test))
             print((y_pred))
             score=max_sum_decode.get_test_accuracy(y_test,y_pred)
-            test_acc.append(score*100)
-            y_test=y_test.reshape(len(y_test,))
+        test_acc.append(score*100)
+        y_test=y_test.reshape(len(y_test,))
         given_words, pred_words=svm.form_words(y_test,y_pred)
         w_acc=svm.word_accuracy(given_words,pred_words)
         wrd_acr.append(w_acc*100)
@@ -109,17 +123,18 @@ def test_tamper_svm():
 
 def test_tamper_crf():
     test_accuracy,word_acr=tamper('crf')
-    mp.figure(103)
+    mp.figure(108)
     mp.title('Letter Wise Accuracy vs C - CRF')
     mp.plot(x,test_accuracy)
     mp.ylabel('Letter Wise Accuracy')
     mp.xlabel('X')
-    mp.figure(104)
+    mp.figure(107)
     mp.plot(x,word_acr)
     mp.ylabel('Word Wise Accuracy')
     mp.xlabel('X')
     mp.title('Word Wise Accuracy vs C - CRF')
     
+#test_tamper_svm()
 test_tamper_crf()    
 
         

@@ -14,11 +14,6 @@ import readInput as ri
 import numpy as np
 
 def translate(X, offset):
-
-    
-
-
-
     ox = offset[0]; 
     oy = offset[1];
     lenx, leny = X.shape;
