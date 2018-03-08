@@ -53,6 +53,7 @@ def test_params():
     y_pred = decode.max_sum(X_test, W, T)
     y_pred=[y+1 for y in y_pred]
     y_test=y_test.reshape(26198,)
+    numpy.savetxt("prediction",y_pred)
 #    print(y_pred)
 #    print(y_test)
     test_acc=get_test_accuracy(y_test,y_pred)
@@ -65,7 +66,7 @@ def test_params():
     print("Test word accuracy=",word_acr)
 
 
-#test_params()
+test_params()
 
 #Test letter wise accuracy= 80.1320711504695
 #Test word accuracy= 34.70040721349622

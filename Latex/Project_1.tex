@@ -221,6 +221,23 @@ The SVM-struct performs slightly better than the CRF model .
 \end{minipage}
 \end{figure}
 
+\begin{figure}[t!]
+\begin{minipage}[b]{0.50\textwidth}
+\centering
+\vspace{-0.6em}
+\includegraphics[width=9cm]{CRF_letter_wise_t.png}
+\vspace{0.6em}
+\end{minipage}
+
+\begin{minipage}[b]{0.50\textwidth}
+\centering
+\vspace{-0.6em}
+\includegraphics[width=9cm]{CRF_word_wise_t.png}
+\vspace{0.6em}
+\end{minipage}
+\end{figure}
+
+
 \section*{Observation for question 4}
 In general , as the number of transformation increase , the letter wise / word wise accuracy decrease for the given models : SVM-MC , SVM-HMM , CRF ,
 This is as expected because once we tamper the data with increasing number of transformations , the performance of the model should decrease .

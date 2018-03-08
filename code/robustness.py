@@ -135,7 +135,22 @@ def test_tamper_crf():
     mp.title('Word Wise Accuracy vs C - CRF')
     
 #test_tamper_svm()
-test_tamper_crf()    
+#test_tamper_crf()    
+def plot():
+    x=[0,500,1000,1500]
+    test_accuracy=[80.23,79.12,77.78,76.12]
+    word_acr=[14.12,3.89,2.78,1.18]
+    mp.figure(1)
+    mp.plot(x,test_accuracy)
+    mp.title('Letter wise Accuracy vs C - CRF ')
+    mp.ylabel('Accuracy')
+    mp.xlabel('C')
+    mp.figure(2)
+    mp.plot(x,word_acr)
+    mp.ylabel('Accuracy')
+    mp.xlabel('C')  
+    mp.title('Word wise Accuracy vs C - CRF ')    
 
+plot()
         
 
