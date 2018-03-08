@@ -52,6 +52,7 @@ def max_sum(X, W, T):
 	for i in range(alpha_len):
 		interior[i] = numpy.dot(W[i], X[-1]) + trellis[-1, k]
 	y_star[-1] = numpy.argmax(interior)
+	print(interior[y_star[-1]])
 
 	for i in range(X.shape[0]-1, 0, -1):
 		for j in range(alpha_len):
