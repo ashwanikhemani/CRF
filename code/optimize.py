@@ -1,6 +1,7 @@
 import numpy, data_read, prob_grad
 from scipy.optimize import fmin_bfgs
-
+import time
+import pickle
 X_y = data_read.read_train()
 W, T = data_read.read_model()
 
@@ -62,5 +63,18 @@ initial_guess = numpy.zeros((26*128+26*26))
 #bounds = [(-10000000, 10000000)]*(28*128+26*26)
 
 
-ret = fmin_bfgs(func, initial_guess, fprime=func_prime, args=(X_y[:5], 1000),\
-	maxiter=2, retall=True, full_output=True)
+#ret = fmin_bfgs(func, initial_guess, fprime=func_prime, args=(X_y[:5], 1000),\
+#	maxiter=2, retall=True, full_output=True)
+
+def get_params(x_y):
+    t0 = time.time()
+    ret=fmin_bfgs(func, initial_guess, fprime=func_prime, args=(X_y,1000),\
+    	 maxiter=100,retall=True, full_output=True)
+    t1 = time.time()
+    with open("best_Weights_tampered","+bw") as f :
+        pickle.dump(ret,f)
+    numpy.savetxt("best_Weights_tampered",ret[0])
+    #numpy.savetxt("best_func_c_10",ret[1])
+    
+    print(f"Time: {t1-t0}")
+    
