@@ -1,6 +1,7 @@
 import numpy 
 import decode
 from readInput import read_word_indexes,read_test_struct
+import matplotlib.pyplot as mp
 
 #X, W, T = data_read.read_decode_input()
 #
@@ -46,7 +47,7 @@ def form_words(y1,y2):
 def test_params():
     X_test,y_test=read_test_struct()
     y_pred=[]
-    a=numpy.loadtxt("params_200",usecols=(0,))
+    a=numpy.loadtxt("best_params",usecols=(0,))
     W=numpy.array(a[:26*128].reshape(26,128))
     T=numpy.array(a[26*128:26*128+26*26].reshape(26,26))
     y_pred = decode.max_sum(X_test, W, T)
@@ -64,8 +65,30 @@ def test_params():
     print("Test word accuracy=",word_acr)
 
 
-test_params()
+#test_params()
 
 #Test letter wise accuracy= 80.1320711504695
 #Test word accuracy= 34.70040721349622
 
+
+#426 iterations
+#Test letter wise accuracy= 80.25040079395373
+#Test word accuracy= 34.75858057009889
+
+def plot():
+    C=[1,10,100,1000]
+    test_accuracy=[44.74,68.80,79.19,80.13]
+    word_acr=[1.80,14.89,32.78,34.70]
+    mp.figure(1)
+    mp.plot(C,test_accuracy)
+    mp.title('Letter wise Accuracy vs C - CRF ')
+    mp.ylabel('Accuracy')
+    mp.xlabel('C')
+    mp.figure(2)
+    mp.plot(C,word_acr)
+    mp.ylabel('Accuracy')
+    mp.xlabel('C')  
+    mp.title('Word wise Accuracy vs C - CRF ')
+
+#plot()
+    
