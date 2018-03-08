@@ -22,18 +22,6 @@
 \begin{document}
 	
 	\maketitle
-\begin{center}
-\begin{tabular}{ |c|c| } 
- \hline
- Maximum Objective Value for 1C && 200.33257896998455\\
- \hline
- Average Log Probability for 2A && -31.28\\
- \hline
- Optimal Objective Value for 2B && 3701.15\\
- \hline
-
-\end{tabular}
-\end{center}
 	\section*{1a Solution}
 
 	We can simplify $\log p(y^t, X^t)$ as follows:
@@ -153,8 +141,60 @@ The feature function (via the indicator) will only be non-zero for terms s.t. $y
 $p(\yvec|X)$ term will become $p(y_s=y|X)$ via marginalization, and $x_s$ will be selected by the feature function. The gradient with respect to $T$ has a similar argument. But instead what will be 
 important is the feature $\sembrack{y_s = i, y_{s+1} = j}$ which will marginalize $p(\yvec|X)$ to $p(y_s=i,y_{s+1}=j)$. 
 	
-	
+\begin{center}
+\begin{tabular}{ |c|c| } 
+ \hline
+ Maximum Objective Value for 1C && 200.33257896998455\\
+ \hline
+ Average Log Probability for 2A && -31.28\\
+ \hline
+ Optimal Objective Value for 2B && 3701.15\\
+ \hline
 
+\end{tabular}
+\end{center}
 
+\begin{figure}[t!]
+\begin{minipage}[b]{0.62\textwidth} 
+\centering 	
+\vspace{-0.6em} 
+\includegraphics[width=9cm]{CRF_letter_wise.png}
+\vspace{0.6em} 
+\end{minipage} 
+~~~ 
+\begin{minipage}[b]{0.62\textwidth} 
+\centering 	
+\vspace{-0.6em} 
+\includegraphics[width=9cm]{SVM-HMM_letter_wise.png}
+\vspace{0.6em} 
+\end{minipage} 
+~~~ 
+\begin{minipage}[b]{0.62\textwidth} 
+\centering 	
+\vspace{-0.6em} 
+\includegraphics[width=9cm]{SVM-MC_letter_wise.png}
+\vspace{0.6em} 
+\end{minipage} 
+~~~ 
+\begin{minipage}[b]{0.62\textwidth} 
+\centering 	
+\vspace{-0.6em} 
+\includegraphics[width=9cm]{CRF_word_wise.png}
+\vspace{0.6em} 
+\end{minipage} 
+~~~ 
+\begin{minipage}[b]{0.62\textwidth} 
+\centering 	
+\vspace{-0.6em} 
+\includegraphics[width=9cm]{SVM-HMM_word_wise.png}
+\vspace{0.6em} 
+\end{minipage} 
+~~~ 
+\begin{minipage}[b]{0.62\textwidth} 
+\centering 	
+\vspace{-0.6em} 
+\includegraphics[width=9cm]{SVM-MC_word_wise.png}
+\vspace{0.6em} 
+\end{minipage} 
 
 \end{document}
