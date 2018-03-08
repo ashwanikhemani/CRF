@@ -78,7 +78,7 @@
 	The $\grad_{T_{ij}} \log Z_X$ is computed via the chain rule in the following way:
 
 	\begin{align}
-	\grad_{\wvec_y} \log Z_X &= \frac{ \sum_{\hat{\yvec} \in \Ycal^m} \exp \rbr{\sum_{s=1}^m \inner{\wvec_{\yhat_s}}{\xvec_s} + \sum_{s=1}^{m-1} T_{\yhat_s, \yhat_{s+1}}} }
+	\grad_{T_{ij}} \log Z_X &= \frac{ \sum_{\hat{\yvec} \in \Ycal^m} \exp \rbr{\sum_{s=1}^m \inner{\wvec_{\yhat_s}}{\xvec_s} + \sum_{s=1}^{m-1} T_{\yhat_s, \yhat_{s+1}}} }
 	{\sum_{\hat{\yvec} \in \Ycal^m} \exp \rbr{\sum_{s=1}^m \inner{\wvec_{\yhat_s}}{\xvec_s} + \sum_{s=1}^{m-1} T_{\yhat_s, \yhat_{s+1}}}} * \sum_{s=1}^{m-1} \sembrack{y_s = i, y_{s+1} = j}
 	\end{align}
 
@@ -104,15 +104,39 @@
 	\end{align}
 	
 
+\section*{1b Solution}
+
+The features will take the following form. If they are a feature that depends on the letter's label, they will look as follows:
 
 
+	\begin{align}
+	x_i \sembrack{y_i=j}
+	\end{align}
+
+where $i$ will be between $1...m$ and $j$ will be between $1...26$. If the feature depends on the transition between two letters then that feature will take the following form. 
 
 
+	\begin{align}
+	\semibrack{y_i = k, y_i+1 = z}
+	\end{align}
 
+where $i$ is between $1...m$ and $k, z$ are between $1...26$
 
+The gradient of $\log Z_x$ si described in equations 3 and 8. The feature function $\phi(x)$ will "place" the input in specific positions so that the correct dot product and transitions are computed. For example, the feature function enables the selection of $w_7$ to be used in $\inner{x_i}{w_7}$ when $y_i = 7$. \\
 
+Considering features that depend on the label first. The exectation of some features with respect to $p(\yvec|X)$ will be:
 
+	\begin{align}
+	\sum p(\yvec|X)\phi(X)
+	\end{align}
 
+And this is equivalent to:
+
+	\begin{align}
+	\sum p(\yvec|X)x_s \sembrack{y_s=j}
+	\end{align}
+
+The feature function (via the indicator) will only be non-zero for terms s.t. $y_s=y$ and the others will go to zero. Therefore we can say that the above is equivalent to equation 3 because the $p(\yvec|X)$ term will become $p(y_s=y|X)$ via marginalization, and $x_s$ will be selected by the feature function. The gradient with respect to $T$ has a similar argument. But instead what will be important is the feature \semibrak{y_s = i, y_{s+1} = j} which will marginalize $p(\yvec|X)$ to $p(y_s=i,y_{s+1}=j)$. 
 
 
 
