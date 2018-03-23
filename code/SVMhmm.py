@@ -78,7 +78,7 @@ def plot():
    mp.plot(C,word_acr)
    mp.ylabel('Accuracy')
    mp.xlabel('C')
-   mp.title('Letter wise Accuracy vs C - SVM-HMM ')
+   mp.title('Word wise Accuracy vs C - SVM-HMM ')
  
-#plot()
+plot()
 

@@ -49,3 +49,22 @@ t_grad.py
 w_grad.py
 ~script to compute avg gradient with respect to w
 
+robustness.py 
+~script to check robustness of dataset to tampering 
+
+translation.py 
+~script to perform translation
+
+rotation.py 
+~script to perform rotation
+
+SVMhmm.py
+~script to train and test SVM-HMM
+
+
+SVM_MC.py
+~script to train and test SVM-MC
+
+
+
+

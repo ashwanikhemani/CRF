@@ -68,8 +68,8 @@ initial_guess = numpy.zeros((26*128+26*26))
 
 def get_params(x_y):
     t0 = time.time()
-    ret=fmin_bfgs(func, initial_guess, fprime=func_prime, args=(X_y,1000),\
-    	 maxiter=100,retall=True, full_output=True)
+    ret=fmin_bfgs(func, initial_guess, fprime=func_prime, args=(x_y,1000),\
+    	 maxiter=1,retall=True, full_output=True)
     t1 = time.time()
     with open("best_Weights_tampered","+bw") as f :
         pickle.dump(ret,f)
@@ -78,3 +78,4 @@ def get_params(x_y):
     
     print(f"Time: {t1-t0}")
     
+#get_params(X_y)
